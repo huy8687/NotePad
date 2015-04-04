@@ -39,7 +39,7 @@ namespace Note_.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Note_.Properties.Resources", typeof(Resources).Assembly);
+                    var temp = new global::System.Resources.ResourceManager("Note_.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -65,7 +65,7 @@ namespace Note_.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap post_700_1159263434 {
             get {
-                object obj = ResourceManager.GetObject("post-700-1159263434", resourceCulture);
+                var obj = ResourceManager.GetObject("post-700-1159263434", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

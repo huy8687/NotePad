@@ -31,7 +31,7 @@ namespace Note_
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            var resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.lbQues = new System.Windows.Forms.Label();
             this.lbAns = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);

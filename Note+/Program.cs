@@ -29,8 +29,8 @@ namespace Note_
             bool isAdmin;
             try
             {
-                WindowsIdentity user = WindowsIdentity.GetCurrent();
-                WindowsPrincipal principal = new WindowsPrincipal(user);
+                var user = WindowsIdentity.GetCurrent();
+                var principal = new WindowsPrincipal(user);
                 isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
             }
             catch (UnauthorizedAccessException ex)

@@ -50,41 +50,42 @@ namespace Note_
             InitializeComponent();
             timer1.Start();
         }
-        public Form1(ArrayList listKey)
-        {
-            _listKey = listKey;
-            if (!CheckLic())
-            {
-                MessageBox.Show(@"Something Fail!");
-                Dispose();
-                Environment.Exit(0);
-            }
-            InitializeComponent();
-            try
-            {
-                SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
-                _mouseHook.MouseDown += mouseHook_MouseDown;
-                _mouseHook.MouseUp += mouseHook_MouseUp;
-                _mouseListen = new Thread(thread_MouseListen);
-                _keyboardHook.KeyDown += keyboardHook_KeyDown;
-            }
-            catch (Exception)
-            {
-            }
-            timer1.Start();
-            try
-            {
-                lbAns.Text = "";
-                lbQues.Text = "";
-                _mouseListen.Start();
-                _mouseHook.Start();
-                _keyboardHook.Start();
-            }
-            catch (Exception)
-            {
-                ExceptionCheck();
-            }
-        }
+
+        //public Form1(ArrayList listKey)
+        //{
+        //    _listKey = listKey;
+        //    if (!CheckLic())
+        //    {
+        //        MessageBox.Show(@"Something Fail!");
+        //        Dispose();
+        //        Environment.Exit(0);
+        //    }
+        //    InitializeComponent();
+        //    try
+        //    {
+        //        SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
+        //        _mouseHook.MouseDown += mouseHook_MouseDown;
+        //        _mouseHook.MouseUp += mouseHook_MouseUp;
+        //        _mouseListen = new Thread(thread_MouseListen);
+        //        _keyboardHook.KeyDown += keyboardHook_KeyDown;
+        //    }
+        //    catch (Exception)
+        //    {
+        //    }
+        //    timer1.Start();
+        //    try
+        //    {
+        //        lbAns.Text = "";
+        //        lbQues.Text = "";
+        //        _mouseListen.Start();
+        //        _mouseHook.Start();
+        //        _keyboardHook.Start();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        ExceptionCheck();
+        //    }
+        //}
 
         public Form1(ArrayList listKey, string data)
         {
@@ -103,6 +104,7 @@ namespace Note_
                 SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
                 _mouseHook.MouseDown += mouseHook_MouseDown;
                 _mouseHook.MouseUp += mouseHook_MouseUp;
+                _mouseHook.MouseMove += _mouseHook_MouseMove;
                 _mouseListen = new Thread(thread_MouseListen);
                 _keyboardHook.KeyDown += keyboardHook_KeyDown;
             }
@@ -123,6 +125,8 @@ namespace Note_
                 ExceptionCheck();
             }
         }
+
+
         //========================================================================================
         #region Global Hook (capture text, mousem keyboard)
         private void Form1_Load(object sender, EventArgs e)
@@ -132,6 +136,10 @@ namespace Note_
         }
 
         private int _countExit = 0;
+        void _mouseHook_MouseMove(object sender, MouseEventArgs e)
+        {
+            
+        }
         private void keyboardHook_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.F8)
@@ -201,8 +209,8 @@ namespace Note_
             {
                 try
                 {
-                    Point mouse = Cursor.Position; // use Windows forms mouse code instead of WPF
-                    AutomationElement element = AutomationElement.FromPoint(new System.Windows.Point(mouse.X, mouse.Y));
+                    var mouse = Cursor.Position; // use Windows forms mouse code instead of WPF
+                    var element = AutomationElement.FromPoint(new System.Windows.Point(mouse.X, mouse.Y));
 
                     if (element != null)
                     {
@@ -211,14 +219,14 @@ namespace Note_
                         // the "Text" pattern is supported by some applications (including Notepad)and returns the current selection for example
                         if (element.TryGetCurrentPattern(TextPattern.Pattern, out pattern))
                         {
-                            TextPattern textPattern = (TextPattern)pattern;
-                            foreach (TextPatternRange range in textPattern.GetSelection())
+                            var textPattern = (TextPattern)pattern;
+                            foreach (var range in textPattern.GetSelection())
                             {
-                                String text = (RemoveRedundancy(range.GetText(-1))).ToLower();
+                                var text = (RemoveRedundancy(range.GetText(-1))).ToLower();
                                 if (_isMouseDown && text != "" && text.Length < 777 && !text.Equals(pivotStr))
                                 {
                                     pivotStr = text;
-                                    SearchData(text);
+                                    SearchData(text,false);
                                 }
 
                             }
@@ -245,9 +253,9 @@ namespace Note_
 
         private string Encrypt(string plainText)
         {
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
-            byte[] keyBytes = new Rfc2898DeriveBytes(p1 + "X", Encoding.ASCII.GetBytes(p2 + "X")).GetBytes(256 / 8);
+            var keyBytes = new Rfc2898DeriveBytes(p1 + "X", Encoding.ASCII.GetBytes(p2 + "X")).GetBytes(256 / 8);
             var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.Zeros };
             var encryptor = symmetricKey.CreateEncryptor(keyBytes, Encoding.ASCII.GetBytes(p5 + "X"));
 
@@ -268,16 +276,16 @@ namespace Note_
         }
         private string Decrypt(string encryptedText)
         {
-            byte[] cipherTextBytes = Convert.FromBase64String(encryptedText);
-            byte[] keyBytes = new Rfc2898DeriveBytes(p1, Encoding.ASCII.GetBytes(p2)).GetBytes(256 / 8);
+            var cipherTextBytes = Convert.FromBase64String(encryptedText);
+            var keyBytes = new Rfc2898DeriveBytes(p1, Encoding.ASCII.GetBytes(p2)).GetBytes(256 / 8);
             var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.None };
 
             var decryptor = symmetricKey.CreateDecryptor(keyBytes, Encoding.ASCII.GetBytes(p5));
             var memoryStream = new MemoryStream(cipherTextBytes);
             var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
-            byte[] plainTextBytes = new byte[cipherTextBytes.Length];
+            var plainTextBytes = new byte[cipherTextBytes.Length];
 
-            int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+            var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
             memoryStream.Close();
             cryptoStream.Close();
             return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount).TrimEnd("\0".ToCharArray());
@@ -300,29 +308,29 @@ namespace Note_
             }
         }
 
-        private void SearchData(String text)
+        private void SearchData(String text, bool isNext)
         {
             try
             {
                 switch (_modeSearch)
                 {
                     case Mode_Search.Key_Mode:
-                        if (SearchKeyBank(text)) return;
+                        if (SearchKeyBank(text,false)) return;
                         if (_listKey.Count < 2)
                         {
-                            if (SearchBook(text)) return;
+                            if (SearchBook(text,false)) return;
                         }
                         break;
                     case Mode_Search.Book_Mode:
-                        if (SearchBook(text)) return;
+                        if (SearchBook(text,false)) return;
                         if (_data.Length < 5)
                         {
-                            if (SearchKeyBank(text)) return;
+                            if (SearchKeyBank(text,false)) return;
                         }
                         break;
                     case Mode_Search.Key_Book_Mode:
-                        if (SearchKeyBank(text)) return;
-                        if (SearchBook(text)) return;
+                        if (SearchKeyBank(text,false)) return;
+                        if (SearchBook(text,false)) return;
                         break;
                 }
 
@@ -336,41 +344,47 @@ namespace Note_
             }
         }
 
-        private bool SearchBook(String text)
+        private int _indexKey=-1;
+        private int _indexBook=-1;
+
+        private bool SearchBook(String text, bool isNext)
         {
             if (!string.IsNullOrEmpty(_data))
             {
-                var str = "";
                 var index = _data.IndexOf(text);
                 if (index >= 0)
                 {
                     index += text.Length / 2;
-                    if (index < 150) str = _data.Substring(0, 350);
-                    else str = _data.Substring(index - 150, 350);
+                    var str = index < 150 ? _data.Substring(0, 350) : _data.Substring(index - 150, 350);
                     str = (RemoveRedundancy(str));
                     str = str.Replace(text, " █ " + text + " █ ");
                     ModifyTextComponent.SetText(this, lbQues, str);
                     lbQues.Size = new Size(638, 51);
                     lbAns.Size = new Size(1, 1);
+                    _indexBook = index;
                     return true;
                 }
             }
+            _indexBook = -1;
             return false;
         }
 
-        private bool SearchKeyBank(String text)
+        private bool SearchKeyBank(String text, bool isNext)
         {
-            foreach (Key key in _listKey)
+            for (var index = 0; index < _listKey.Count; index++)
             {
+                var key = (Key) _listKey[index];
                 if (key.Ans.Contains(text) || key.Ques.Contains(text))
                 {
                     ModifyTextComponent.SetText(this, lbAns, key.Ans);
                     ModifyTextComponent.SetText(this, lbQues, key.Ques);
                     lbQues.Size = new Size(638, 34);
                     lbAns.Size = new Size(638, 18);
+                    _indexKey = index;
                     return true;
                 }
             }
+            _indexKey = -1;
             return false;
         }
 
@@ -406,9 +420,9 @@ namespace Note_
         {
             try
             {
-                String cpuID = cpuId();
-                String biosID = biosId();
-                String mainboardID = baseId();
+                var cpuID = cpuId();
+                var biosID = biosId();
+                var mainboardID = baseId();
                 return cpuID + biosID + mainboardID;
             }
             catch (Exception)
@@ -446,7 +460,7 @@ namespace Note_
 
         private void setLocation()
         {
-            Screen screen = Screen.PrimaryScreen;
+            var screen = Screen.PrimaryScreen;
             Location = new Point((screen.Bounds.Width - 638) / 2, screen.Bounds.Height - 49);
         }
 
@@ -495,9 +509,9 @@ namespace Note_
         #region Original Device ID Getting Code
         private static string identifier(string wmiClass, string wmiProperty, string wmiMustBeTrue)
         {
-            string result = "";
-            System.Management.ManagementClass mc = new System.Management.ManagementClass(wmiClass);
-            System.Management.ManagementObjectCollection moc = mc.GetInstances();
+            var result = "";
+            var mc = new System.Management.ManagementClass(wmiClass);
+            var moc = mc.GetInstances();
             foreach (System.Management.ManagementObject mo in moc)
             {
                 if (mo[wmiMustBeTrue].ToString() == "True")
@@ -519,9 +533,9 @@ namespace Note_
         }
         private static string identifier(string wmiClass, string wmiProperty)
         {
-            string result = "";
-            System.Management.ManagementClass mc = new System.Management.ManagementClass(wmiClass);
-            System.Management.ManagementObjectCollection moc = mc.GetInstances();
+            var result = "";
+            var mc = new System.Management.ManagementClass(wmiClass);
+            var moc = mc.GetInstances();
             foreach (System.Management.ManagementObject mo in moc)
             {
                 if (result == "")
@@ -540,7 +554,7 @@ namespace Note_
         }
         private static string cpuId()
         {
-            string retVal = identifier("Win32_Processor", "UniqueId");
+            var retVal = identifier("Win32_Processor", "UniqueId");
             if (retVal == "")
             {
                 retVal = identifier("Win32_Processor", "ProcessorId");

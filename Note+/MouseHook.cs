@@ -57,13 +57,13 @@ namespace MouseKeyboardLibrary
             if (nCode > -1 && (MouseDown != null || MouseUp != null || MouseMove != null))
             {
 
-                MouseLLHookStruct mouseHookStruct =
+                var mouseHookStruct =
                     (MouseLLHookStruct)Marshal.PtrToStructure(lParam, typeof(MouseLLHookStruct));
 
-                MouseButtons button = GetButton(wParam);
-                MouseEventType eventType = GetEventType(wParam);
+                var button = GetButton(wParam);
+                var eventType = GetEventType(wParam);
 
-                MouseEventArgs e = new MouseEventArgs(
+                var e = new MouseEventArgs(
                     button,
                     (eventType == MouseEventType.DoubleClick ? 2 : 1),
                     mouseHookStruct.pt.x,

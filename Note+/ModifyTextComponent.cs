@@ -21,7 +21,7 @@ namespace Note_
             // If these threads are different, it returns true. 
             if (ctrl.InvokeRequired)
             {
-                SetTextCallback d = new SetTextCallback(SetText);
+                var d = new SetTextCallback(SetText);
                 form.Invoke(d, new object[] { form, ctrl, text });
             }
             else

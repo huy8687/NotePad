@@ -44,13 +44,13 @@ namespace Note_
             if (fname == "")
             {
                 saveFileDialog1.Filter = "Text Files|*.txt";
-                DialogResult result = saveFileDialog1.ShowDialog();
+                var result = saveFileDialog1.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
                     return;
                 }
                 fname = saveFileDialog1.FileName;
-                StreamWriter s = new StreamWriter(fname);
+                var s = new StreamWriter(fname);
                 s.WriteLine(richTextBox1.Text);
                 s.Flush();
                 s.Close();
@@ -85,21 +85,21 @@ namespace Note_
             richTextBox1.Text = "";
             try
             {
-                DialogResult res = openFileDialog1.ShowDialog();
+                var res = openFileDialog1.ShowDialog();
                 if (res == DialogResult.OK)
                 {
-                    string line = "";
+                    var line = "";
 
                     // Read the file and display it line by line.
-                    System.IO.StreamReader file =
+                    var file =
                         new System.IO.StreamReader(openFileDialog1.FileName, System.Text.Encoding.GetEncoding(1252));
                     while ((line = file.ReadLine().ToLower()) != null)
                     {
                         
                         try
                         {
-                            String ques = RemoveSpaces(line.Substring(0, line.IndexOf("|")));
-                            String ans = RemoveSpaces(line.Substring(line.IndexOf("|") + 1));
+                            var ques = RemoveSpaces(line.Substring(0, line.IndexOf("|")));
+                            var ans = RemoveSpaces(line.Substring(line.IndexOf("|") + 1));
                             _listKey.Add(new Key(ques, ans));
                             richTextBox1.AppendText(line + "\n");
                         }
@@ -124,13 +124,13 @@ namespace Note_
         {
             if (richTextBox1.Text != "")
             {
-                DialogResult click = MessageBox.Show("The text in the Untitled has changed.\n\n Do you want to save the changes?", " My Notepad", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+                var click = MessageBox.Show("The text in the Untitled has changed.\n\n Do you want to save the changes?", " My Notepad", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 if (click == DialogResult.Yes)
                 {
                     if (fname == "")
                     {
                         saveFileDialog1.Filter = "Text Files|*.textBox1";
-                        DialogResult result = saveFileDialog1.ShowDialog();
+                        var result = saveFileDialog1.ShowDialog();
                         if (result == DialogResult.Cancel)
                         {
                             return;
@@ -138,7 +138,7 @@ namespace Note_
                         fname = saveFileDialog1.FileName;
                         // MessageBox.Show(fname);
                     }
-                    StreamWriter write = new StreamWriter(fname);
+                    var write = new StreamWriter(fname);
                     write.WriteLine(richTextBox1.Text);
                     write.Flush();
                     //  textBox1.Text = "";
@@ -169,14 +169,14 @@ namespace Note_
             if (fname == "")
             {
                 saveFileDialog1.Filter = "Text Files|*.txt";
-                DialogResult result = saveFileDialog1.ShowDialog();
+                var result = saveFileDialog1.ShowDialog();
                 if (result == DialogResult.Cancel)
                 {
                     return;
                 }
                 fname = saveFileDialog1.FileName;
             }
-            StreamWriter s = new StreamWriter(fname);
+            var s = new StreamWriter(fname);
             s.WriteLine(richTextBox1.Text);
             s.Flush();
             s.Close();
@@ -187,10 +187,10 @@ namespace Note_
             pageSetupDialog1.PageSettings = new System.Drawing.Printing.PageSettings();
             pageSetupDialog1.PrinterSettings = new System.Drawing.Printing.PrinterSettings();
             pageSetupDialog1.ShowNetwork = false;
-            DialogResult result = pageSetupDialog1.ShowDialog();
+            var result = pageSetupDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
-                object[] results = new object[]{
+                var results = new object[]{
                     pageSetupDialog1.PageSettings.Margins,
                     pageSetupDialog1.PageSettings.PaperSize,
                     pageSetupDialog1.PageSettings.Landscape,
@@ -206,7 +206,7 @@ namespace Note_
             printDialog1.AllowSomePages = true;
             printDialog1.ShowHelp = true;
             printDialog1.Document = docToPrint;
-            DialogResult result = printDialog1.ShowDialog();
+            var result = printDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
                 docToPrint.Print();
@@ -216,8 +216,8 @@ namespace Note_
         private void document_PrintPage(object sender,
           System.Drawing.Printing.PrintPageEventArgs e)
         {
-            string text = "In document_PrintPage method.";
-            System.Drawing.Font printFont = new System.Drawing.Font
+            var text = "In document_PrintPage method.";
+            var printFont = new System.Drawing.Font
                 ("Arial", 35, System.Drawing.FontStyle.Regular);
             e.Graphics.DrawString(text, printFont,
                 System.Drawing.Brushes.Black, 10, 10);
@@ -227,13 +227,13 @@ namespace Note_
         {
             if (richTextBox1.Text != "")
         {
-            DialogResult click = MessageBox.Show("The text in the Untitled has changed.\n\n Do you want to save the changes?", " My Notepad", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
+            var click = MessageBox.Show("The text in the Untitled has changed.\n\n Do you want to save the changes?", " My Notepad", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
             if (click == DialogResult.Yes)
             {
                 if (fname == "")
                 {
                     saveFileDialog1.Filter = "Text Files|*.txt";
-                    DialogResult result = saveFileDialog1.ShowDialog();
+                    var result = saveFileDialog1.ShowDialog();
                     if (result == DialogResult.Cancel)
                     {
                         return;
@@ -241,7 +241,7 @@ namespace Note_
                     fname = saveFileDialog1.FileName;
                     // MessageBox.Show(fname);
                 }
-                StreamWriter write = new StreamWriter(fname);
+                var write = new StreamWriter(fname);
                 write.WriteLine(richTextBox1.Text);
                 write.Flush();
                 write.Close();
@@ -313,7 +313,7 @@ namespace Note_
             string timeDate;
             timeDate = DateTime.Now.ToShortTimeString() + " " +
             DateTime.Now.ToShortDateString();
-            int newSelectionStart = richTextBox1.SelectionStart + timeDate.Length;
+            var newSelectionStart = richTextBox1.SelectionStart + timeDate.Length;
             richTextBox1.Text = richTextBox1.Text.Insert(richTextBox1.SelectionStart, timeDate);
             richTextBox1.SelectionStart = newSelectionStart;
         }
@@ -347,9 +347,9 @@ namespace Note_
         {
             try
             {
-                String cpuID = cpuId();
-                String biosID = biosId();
-                String mainboardID = baseId();
+                var cpuID = cpuId();
+                var biosID = biosId();
+                var mainboardID = baseId();
                 return cpuID + biosID + mainboardID;
             }
             catch (Exception)
@@ -381,9 +381,9 @@ namespace Note_
         #region Original Device ID Getting Code
         private static string identifier(string wmiClass, string wmiProperty, string wmiMustBeTrue)
         {
-            string result = "";
-            System.Management.ManagementClass mc = new System.Management.ManagementClass(wmiClass);
-            System.Management.ManagementObjectCollection moc = mc.GetInstances();
+            var result = "";
+            var mc = new System.Management.ManagementClass(wmiClass);
+            var moc = mc.GetInstances();
             foreach (System.Management.ManagementObject mo in moc)
             {
                 if (mo[wmiMustBeTrue].ToString() == "True")
@@ -405,9 +405,9 @@ namespace Note_
         }
         private static string identifier(string wmiClass, string wmiProperty)
         {
-            string result = "";
-            System.Management.ManagementClass mc = new System.Management.ManagementClass(wmiClass);
-            System.Management.ManagementObjectCollection moc = mc.GetInstances();
+            var result = "";
+            var mc = new System.Management.ManagementClass(wmiClass);
+            var moc = mc.GetInstances();
             foreach (System.Management.ManagementObject mo in moc)
             {
                 if (result == "")
@@ -426,7 +426,7 @@ namespace Note_
         }
         private static string cpuId()
         {
-            string retVal = identifier("Win32_Processor", "UniqueId");
+            var retVal = identifier("Win32_Processor", "UniqueId");
             if (retVal == "")
             {
                 retVal = identifier("Win32_Processor", "ProcessorId");
@@ -487,9 +487,9 @@ namespace Note_
 
         private string Encrypt(string plainText)
         {
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
-            byte[] keyBytes = new Rfc2898DeriveBytes(p1 + "X", Encoding.ASCII.GetBytes(p2 + "X")).GetBytes(256 / 8);
+            var keyBytes = new Rfc2898DeriveBytes(p1 + "X", Encoding.ASCII.GetBytes(p2 + "X")).GetBytes(256 / 8);
             var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.Zeros };
             var encryptor = symmetricKey.CreateEncryptor(keyBytes, Encoding.ASCII.GetBytes(p5 + "X"));
 
@@ -510,16 +510,16 @@ namespace Note_
         }
         private string Decrypt(string encryptedText)
         {
-            byte[] cipherTextBytes = Convert.FromBase64String(encryptedText);
-            byte[] keyBytes = new Rfc2898DeriveBytes(p1, Encoding.ASCII.GetBytes(p2)).GetBytes(256 / 8);
+            var cipherTextBytes = Convert.FromBase64String(encryptedText);
+            var keyBytes = new Rfc2898DeriveBytes(p1, Encoding.ASCII.GetBytes(p2)).GetBytes(256 / 8);
             var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.None };
 
             var decryptor = symmetricKey.CreateDecryptor(keyBytes, Encoding.ASCII.GetBytes(p5));
             var memoryStream = new MemoryStream(cipherTextBytes);
             var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
-            byte[] plainTextBytes = new byte[cipherTextBytes.Length];
+            var plainTextBytes = new byte[cipherTextBytes.Length];
 
-            int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+            var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
             memoryStream.Close();
             cryptoStream.Close();
             return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount).TrimEnd("\0".ToCharArray());
@@ -542,11 +542,11 @@ namespace Note_
             richTextBox1.Text = "";
             try
             {
-                DialogResult res = openFileDialog1.ShowDialog();
+                var res = openFileDialog1.ShowDialog();
                 if (res == DialogResult.OK)
                 {
                     // Read the file and display it line by line.
-                    System.IO.StreamReader file =
+                    var file =
                         new System.IO.StreamReader(openFileDialog1.FileName, System.Text.Encoding.GetEncoding(1252));
                     _data = file.ReadToEnd();
                     richTextBox1.AppendText(_data);

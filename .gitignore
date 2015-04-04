@@ -1,1 +1,9 @@
 # git ignore file
+Note+/bin/Debug/log.txt
+Note+/bin/Debug/Notepad.exe
+Note+/bin/Debug/Notepad.pdb
+Note+/obj/Debug/Note_.Form1.resources
+Note+/obj/Debug/Notepad.csproj.FileListAbsolute.txt
+Note+/obj/Debug/Notepad.csproj.GenerateResource.Cache
+Note+/obj/Debug/Notepad.exe
+Note+/obj/Debug/Notepad.pdb

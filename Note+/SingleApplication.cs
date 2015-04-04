@@ -37,10 +37,10 @@ namespace SingleInstance
 		/// <returns></returns>
 		private static IntPtr GetCurrentInstanceWindowHandle()
 		{    
-			IntPtr hWnd = IntPtr.Zero;
-			Process process = Process.GetCurrentProcess();
-			Process[] processes = Process.GetProcessesByName(process.ProcessName);
-			foreach(Process _process in processes)
+			var hWnd = IntPtr.Zero;
+			var process = Process.GetCurrentProcess();
+			var processes = Process.GetProcessesByName(process.ProcessName);
+			foreach(var _process in processes)
 			{
 				// Get the first instance that is not this instance, has the
 				// same process name and was started from the same file name
@@ -62,7 +62,7 @@ namespace SingleInstance
 		/// </summary>
 		private static void SwitchToCurrentInstance()
 		{    
-			IntPtr hWnd = GetCurrentInstanceWindowHandle();
+			var hWnd = GetCurrentInstanceWindowHandle();
 			if (hWnd != IntPtr.Zero)    
 			{    
 				// Restore window if minimised. Do not restore if already in
@@ -117,9 +117,9 @@ namespace SingleInstance
 		/// <returns>returns true if already running</returns>
 		private static bool IsAlreadyRunning()
 		{
-			string strLoc = Assembly.GetExecutingAssembly().Location;
+			var strLoc = Assembly.GetExecutingAssembly().Location;
 			FileSystemInfo fileInfo = new FileInfo(strLoc);
-			string sExeName = fileInfo.Name;
+			var sExeName = fileInfo.Name;
 			bool bCreatedNew;
 
 			mutex = new Mutex(true, "Global\\"+sExeName, out bCreatedNew);
