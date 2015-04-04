@@ -26,6 +26,7 @@ namespace Note_
 
         private ArrayList _listKey;
         private Thread _mouseListen;
+
         private bool _mousListenRun = true;
         private const Boolean Running = true;
         private Boolean _isMouseDown;
