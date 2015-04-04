@@ -41,7 +41,7 @@ namespace Note_
             // 
             this.lbQues.Font = new System.Drawing.Font("Corbel", 10F);
             this.lbQues.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            this.lbQues.Location = new System.Drawing.Point(2, 0);
+            this.lbQues.Location = new System.Drawing.Point(3, 0);
             this.lbQues.Name = "lbQues";
             this.lbQues.Size = new System.Drawing.Size(635, 34);
             this.lbQues.TabIndex = 1;
@@ -51,9 +51,9 @@ namespace Note_
             // 
             this.lbAns.Font = new System.Drawing.Font("Corbel", 10F);
             this.lbAns.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            this.lbAns.Location = new System.Drawing.Point(5, 34);
+            this.lbAns.Location = new System.Drawing.Point(0, 33);
             this.lbAns.Name = "lbAns";
-            this.lbAns.Size = new System.Drawing.Size(632, 18);
+            this.lbAns.Size = new System.Drawing.Size(638, 18);
             this.lbAns.TabIndex = 2;
             // 
             // timer1

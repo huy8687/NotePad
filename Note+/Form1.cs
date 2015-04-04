@@ -68,7 +68,6 @@ namespace Note_
                 _mouseHook.DoubleClick += _mouseHook_DoubleClick;
                 _mouseListen = new Thread(thread_MouseListen);
                 _keyboardHook.KeyDown += keyboardHook_KeyDown;
-                //_keyboardHook.Start();
             }
             catch (Exception)
             {
@@ -317,8 +316,6 @@ namespace Note_
             }
         }
 
-
-
         private void searchKey(String text)
         {
             try
@@ -344,14 +341,15 @@ namespace Note_
                         if (index < 150) str = _data.Substring(0, 350);
                         else str = _data.Substring(index - 150, 350);
                         str = (RemoveNewLine(str));
+                        str = str.Replace(text, " █ " + text + " █ ");
                         ModifyTextComponent.SetText(this, lbQues, str);
-                        lbQues.Size = new Size(638, 49);
+                        lbQues.Size = new Size(638, 51);
                         lbAns.Size = new Size(1, 1);
                         return;
                     }
                 }
                 ModifyTextComponent.SetText(this, lbQues, "<Next>");
-                ModifyTextComponent.SetText(this, lbQues, "");
+                ModifyTextComponent.SetText(this, lbAns, "");
             }
             catch (Exception)
             {
