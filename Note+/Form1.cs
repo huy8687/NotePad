@@ -65,7 +65,6 @@ namespace Note_
                 SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
                 _mouseHook.MouseDown += mouseHook_MouseDown;
                 _mouseHook.MouseUp += mouseHook_MouseUp;
-                _mouseHook.DoubleClick += _mouseHook_DoubleClick;
                 _mouseListen = new Thread(thread_MouseListen);
                 _keyboardHook.KeyDown += keyboardHook_KeyDown;
             }
@@ -87,26 +86,11 @@ namespace Note_
             }
         }
 
-        void _mouseHook_DoubleClick(object sender, EventArgs e)
-        {
-            using (StreamWriter sw = File.AppendText("log.txt"))
-            {
-                sw.WriteLine("doble");
-            }
-            _modeSearch = (Mode_Search)((int)(((int)_modeSearch + 1) / 3));
-            _isMouseDown = true;
-            //File.AppendAllText("log.txt",_modeSearch.ToString());
-                // Create a file to write to. 
-
-            ModifyTextComponent.SetText(this, lbQues, _modeSearch.ToString());
-            Thread.Sleep(500);
-            _isMouseDown = false;
-        }
         public Form1(ArrayList listKey, string data)
         {
             _listKey = listKey;
             _data = data == null ? "" : data;
-            _data = (RemoveNewLine(_data)).ToLower();
+            _data = (RemoveRedundancy(_data)).ToLower();
             if (!CheckLic())
             {
                 MessageBox.Show(@"Something Fail!");
@@ -119,12 +103,8 @@ namespace Note_
                 SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
                 _mouseHook.MouseDown += mouseHook_MouseDown;
                 _mouseHook.MouseUp += mouseHook_MouseUp;
-                MouseSimulator.DoubleClick(MouseButton.Left);
-                _mouseHook.DoubleClick += _mouseHook_DoubleClick;
-                
                 _mouseListen = new Thread(thread_MouseListen);
                 _keyboardHook.KeyDown += keyboardHook_KeyDown;
-                //_keyboardHook.Start();
             }
             catch (Exception)
             {
@@ -194,21 +174,25 @@ namespace Note_
         {
             _isMouseDown = false;
             ExceptionCheck();
-                // Create a file to write to. 
-                using (StreamWriter sw = File.AppendText("log.txt"))
-                {
-                    sw.WriteLine("UP");
-                }
         }
+
+        private DateTime _dtFirstClick;
+        private MouseEventArgs _firstClickEvent;
 
         private void mouseHook_MouseDown(object sender, MouseEventArgs e)
         {
-            _isMouseDown = true;
-                // Create a file to write to. 
-            using (StreamWriter sw = File.AppendText("log.txt"))
+            try
+            {
+                _isMouseDown = true;
+                if (DateTime.Now.Subtract(_dtFirstClick).TotalMilliseconds < 150 && _firstClickEvent != null && e.X == _firstClickEvent.X && e.Y == _firstClickEvent.Y)
                 {
-                    sw.WriteLine("DOWN");
+                    _modeSearch = (Mode_Search)((int)(_modeSearch + 1) % 3);
+                    ModifyTextComponent.SetText(this, lbQues, _modeSearch.ToString());
                 }
+                _firstClickEvent = e;
+                _dtFirstClick = DateTime.Now;
+            }
+            catch{}
         }
 
         private void thread_MouseListen()
@@ -230,11 +214,11 @@ namespace Note_
                             TextPattern textPattern = (TextPattern)pattern;
                             foreach (TextPatternRange range in textPattern.GetSelection())
                             {
-                                String text = (RemoveNewLine(range.GetText(-1))).ToLower();
+                                String text = (RemoveRedundancy(range.GetText(-1))).ToLower();
                                 if (_isMouseDown && text != "" && text.Length < 777 && !text.Equals(pivotStr))
                                 {
                                     pivotStr = text;
-                                    searchKey(text);
+                                    SearchData(text);
                                 }
 
                             }
@@ -316,38 +300,33 @@ namespace Note_
             }
         }
 
-        private void searchKey(String text)
+        private void SearchData(String text)
         {
             try
             {
-                foreach (Key key in _listKey)
+                switch (_modeSearch)
                 {
-                    if (key.Ans.Contains(text) || key.Ques.Contains(text))
-                    {
-                        ModifyTextComponent.SetText(this, lbAns, key.Ans);
-                        ModifyTextComponent.SetText(this, lbQues, key.Ques);
-                        lbQues.Size = new Size(638, 34);
-                        lbAns.Size = new Size(638, 18);
-                        return;
-                    }
+                    case Mode_Search.Key_Mode:
+                        if (SearchKeyBank(text)) return;
+                        if (_listKey.Count < 2)
+                        {
+                            if (SearchBook(text)) return;
+                        }
+                        break;
+                    case Mode_Search.Book_Mode:
+                        if (SearchBook(text)) return;
+                        if (_data.Length < 5)
+                        {
+                            if (SearchKeyBank(text)) return;
+                        }
+                        break;
+                    case Mode_Search.Key_Book_Mode:
+                        if (SearchKeyBank(text)) return;
+                        if (SearchBook(text)) return;
+                        break;
                 }
-                if (!string.IsNullOrEmpty(_data))
-                {
-                    var str = "";
-                    var index = _data.IndexOf(text);
-                    if (index >= 0)
-                    {
-                        index += text.Length / 2;
-                        if (index < 150) str = _data.Substring(0, 350);
-                        else str = _data.Substring(index - 150, 350);
-                        str = (RemoveNewLine(str));
-                        str = str.Replace(text, " █ " + text + " █ ");
-                        ModifyTextComponent.SetText(this, lbQues, str);
-                        lbQues.Size = new Size(638, 51);
-                        lbAns.Size = new Size(1, 1);
-                        return;
-                    }
-                }
+
+                // default
                 ModifyTextComponent.SetText(this, lbQues, "<Next>");
                 ModifyTextComponent.SetText(this, lbAns, "");
             }
@@ -357,7 +336,45 @@ namespace Note_
             }
         }
 
-        private static string RemoveNewLine(string s)
+        private bool SearchBook(String text)
+        {
+            if (!string.IsNullOrEmpty(_data))
+            {
+                var str = "";
+                var index = _data.IndexOf(text);
+                if (index >= 0)
+                {
+                    index += text.Length / 2;
+                    if (index < 150) str = _data.Substring(0, 350);
+                    else str = _data.Substring(index - 150, 350);
+                    str = (RemoveRedundancy(str));
+                    str = str.Replace(text, " █ " + text + " █ ");
+                    ModifyTextComponent.SetText(this, lbQues, str);
+                    lbQues.Size = new Size(638, 51);
+                    lbAns.Size = new Size(1, 1);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private bool SearchKeyBank(String text)
+        {
+            foreach (Key key in _listKey)
+            {
+                if (key.Ans.Contains(text) || key.Ques.Contains(text))
+                {
+                    ModifyTextComponent.SetText(this, lbAns, key.Ans);
+                    ModifyTextComponent.SetText(this, lbQues, key.Ques);
+                    lbQues.Size = new Size(638, 34);
+                    lbAns.Size = new Size(638, 18);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static string RemoveRedundancy(string s)
         {
             s = s.Replace(Environment.NewLine, " ");
             s = s.Replace("\t", " ");
