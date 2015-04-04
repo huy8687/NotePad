@@ -39,3 +39,6 @@ E:\Learning\Working\Notepppp\Note_Book\Note+\obj\Debug\Note_.Form1.resources
 E:\Learning\Working\Notepppp\Note_Book\Note+\obj\Debug\Note_.NotePad.resources
 E:\Learning\Working\Notepppp\Note_Book\Note+\obj\Debug\Note_.Properties.Resources.resources
 E:\Learning\Working\Notepppp\Note_Book\Note+\obj\Debug\Notepad.csproj.GenerateResource.Cache
+E:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\bin\Debug\Notepad.exe.config
+E:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Notepad.exe
+E:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Notepad.pdb
