@@ -1,0 +1,8 @@
+D:\Learning\SelfCodeing\Note+\Note+\obj\Debug\Note_.Form1.resources
+D:\Learning\SelfCodeing\Note+\Note+\obj\Debug\Note_.Properties.Resources.resources
+D:\Learning\SelfCodeing\Note+\Note+\obj\Debug\Note+.csproj.GenerateResource.Cache
+D:\Learning\SelfCodeing\Note+\Note+\bin\Debug\Notepad.pdb
+D:\Learning\SelfCodeing\Note+\Note+\obj\Debug\Notepad.pdb
+D:\Learning\SelfCodeing\Note+\Note+\bin\Debug\Notepad.exe.config
+D:\Learning\SelfCodeing\Note+\Note+\bin\Debug\Notepad.exe
+D:\Learning\SelfCodeing\Note+\Note+\obj\Debug\Notepad.exe
