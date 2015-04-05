@@ -16,27 +16,25 @@ namespace Note_
 {
     public partial class Form1 : Form
     {
-        private String[] _filePaths;
         private readonly MouseHook _mouseHook = new MouseHook();
         private readonly KeyboardHook _keyboardHook = new KeyboardHook();
-        private string _data;
+        private readonly string _data;
 
-        private enum Mode_Search { Key_Mode, Book_Mode, Key_Book_Mode };
-        private Mode_Search _modeSearch = Mode_Search.Key_Book_Mode;
+        private enum ModeSearch { KEY_MODE, BOOK_MODE, KEY_BOOK_MODE };
+        private ModeSearch _modeSearch = ModeSearch.KEY_BOOK_MODE;
 
-        private ArrayList _listKey;
-        private Thread _mouseListen;
+        private readonly ArrayList _listKey;
+        private readonly Thread _mouseListen;
 
         private bool _mousListenRun = true;
-        private const Boolean Running = true;
-        private Boolean _isMouseDown;
+        private bool _isMouseDown;
         public Form1()
         {
             if (!CheckLic())
             {
                 try
                 {
-                    File.WriteAllText(@"info.xml", Encrypt(getMachineID()));
+                    File.WriteAllText(@"info.xml", Encrypt(GetMachineId()));
                 }
                 catch (Exception e)
                 {
@@ -51,47 +49,11 @@ namespace Note_
             timer1.Start();
         }
 
-        //public Form1(ArrayList listKey)
-        //{
-        //    _listKey = listKey;
-        //    if (!CheckLic())
-        //    {
-        //        MessageBox.Show(@"Something Fail!");
-        //        Dispose();
-        //        Environment.Exit(0);
-        //    }
-        //    InitializeComponent();
-        //    try
-        //    {
-        //        SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
-        //        _mouseHook.MouseDown += mouseHook_MouseDown;
-        //        _mouseHook.MouseUp += mouseHook_MouseUp;
-        //        _mouseListen = new Thread(thread_MouseListen);
-        //        _keyboardHook.KeyDown += keyboardHook_KeyDown;
-        //    }
-        //    catch (Exception)
-        //    {
-        //    }
-        //    timer1.Start();
-        //    try
-        //    {
-        //        lbAns.Text = "";
-        //        lbQues.Text = "";
-        //        _mouseListen.Start();
-        //        _mouseHook.Start();
-        //        _keyboardHook.Start();
-        //    }
-        //    catch (Exception)
-        //    {
-        //        ExceptionCheck();
-        //    }
-        //}
-
         public Form1(ArrayList listKey, string data)
         {
             _listKey = listKey;
-            _data = data == null ? "" : data;
-            _data = (RemoveRedundancy(_data)).ToLower();
+            _data = data ?? "";
+            _data = (Utilities.RemoveRedundancy(_data)).ToLower();
             if (!CheckLic())
             {
                 MessageBox.Show(@"Something Fail!");
@@ -101,7 +63,7 @@ namespace Note_
             InitializeComponent();
             try
             {
-                SetWindowPos(Handle, HWND_TOPMOST, 0, 0, 0, 0, TOPMOST_FLAGS);
+                SetWindowPos(Handle, HwndTopmost, 0, 0, 0, 0, TopmostFlags);
                 _mouseHook.MouseDown += mouseHook_MouseDown;
                 _mouseHook.MouseUp += mouseHook_MouseUp;
                 _mouseHook.MouseMove += _mouseHook_MouseMove;
@@ -144,7 +106,7 @@ namespace Note_
         {
             if (_isMouseDown && !_moveOne && e.X - _firstClickEvent.X > 200)
             {
-                SearchData(pivotStr,true);
+                SearchData(_pivotStr,true);
                 _moveOne = true;
             }
         }
@@ -201,7 +163,7 @@ namespace Note_
                 _moveOne = false;
                 if (DateTime.Now.Subtract(_dtFirstClick).TotalMilliseconds < 150 && _firstClickEvent != null && e.X == _firstClickEvent.X && e.Y == _firstClickEvent.Y)
                 {
-                    _modeSearch = (Mode_Search)((int)(_modeSearch + 1) % 3);
+                    _modeSearch = (ModeSearch)((int)(_modeSearch + 1) % 3);
                     ModifyTextComponent.SetText(this, lbQues, _modeSearch.ToString());
                 }
                 _firstClickEvent = e;
@@ -232,10 +194,10 @@ namespace Note_
                             var textPattern = (TextPattern)pattern;
                             foreach (var range in textPattern.GetSelection())
                             {
-                                var text = (RemoveRedundancy(range.GetText(-1))).ToLower();
-                                if (_isMouseDown && text != "" && text.Length < 777 && !text.Equals(pivotStr))
+                                var text = (Utilities.RemoveRedundancy(range.GetText(-1))).ToLower();
+                                if (_isMouseDown && text != "" && text.Length < 777 && !text.Equals(_pivotStr))
                                 {
-                                    pivotStr = text;
+                                    _pivotStr = text;
                                     SearchData(text,false);
                                 }
 
@@ -249,25 +211,25 @@ namespace Note_
         }
         #endregion
 
-        private String pivotStr = "";
+        private String _pivotStr = "";
         //========================================================================================
         #region Encrypt, decrypt data
 
-        private string p0 = "Q@LW2td1";
-        private string p1 = "P@@s9dhni2";
-        private string p2 = "S@LT&Ad2";
-        private string p3 = "C@@scw2ai2";
-        private string p4 = "A@@ad2djg5";
-        private string p5 = "@nk1j2b3k1jb23kb12";
-        private string p6 = "@n20dk2kjflep20fk3";
+        private string _p0 = "Q@LW2td1";
+        private readonly string _p1 = "P@@s9dhni2";
+        private readonly string _p2 = "S@LT&Ad2";
+        private string _p3 = "C@@scw2ai2";
+        private string _p4 = "A@@ad2djg5";
+        private readonly string _p5 = "@nk1j2b3k1jb23kb12";
+        private string _p6 = "@n20dk2kjflep20fk3";
 
         private string Encrypt(string plainText)
         {
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
-            var keyBytes = new Rfc2898DeriveBytes(p1 + "X", Encoding.ASCII.GetBytes(p2 + "X")).GetBytes(256 / 8);
+            var keyBytes = new Rfc2898DeriveBytes(_p1 + "X", Encoding.ASCII.GetBytes(_p2 + "X")).GetBytes(256 / 8);
             var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.Zeros };
-            var encryptor = symmetricKey.CreateEncryptor(keyBytes, Encoding.ASCII.GetBytes(p5 + "X"));
+            var encryptor = symmetricKey.CreateEncryptor(keyBytes, Encoding.ASCII.GetBytes(_p5 + "X"));
 
             byte[] cipherTextBytes;
 
@@ -287,10 +249,10 @@ namespace Note_
         private string Decrypt(string encryptedText)
         {
             var cipherTextBytes = Convert.FromBase64String(encryptedText);
-            var keyBytes = new Rfc2898DeriveBytes(p1, Encoding.ASCII.GetBytes(p2)).GetBytes(256 / 8);
+            var keyBytes = new Rfc2898DeriveBytes(_p1, Encoding.ASCII.GetBytes(_p2)).GetBytes(256 / 8);
             var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.None };
 
-            var decryptor = symmetricKey.CreateDecryptor(keyBytes, Encoding.ASCII.GetBytes(p5));
+            var decryptor = symmetricKey.CreateDecryptor(keyBytes, Encoding.ASCII.GetBytes(_p5));
             var memoryStream = new MemoryStream(cipherTextBytes);
             var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
             var plainTextBytes = new byte[cipherTextBytes.Length];
@@ -324,21 +286,21 @@ namespace Note_
             {
                 switch (_modeSearch)
                 {
-                    case Mode_Search.Key_Mode:
+                    case ModeSearch.KEY_MODE:
                         if (SearchKeyBank(text, isNext)) return;
                         if (_listKey.Count < 2)
                         {
                             if (SearchBook(text, isNext)) return;
                         }
                         break;
-                    case Mode_Search.Book_Mode:
+                    case ModeSearch.BOOK_MODE:
                         if (SearchBook(text, isNext)) return;
                         if (_data.Length < 5)
                         {
                             if (SearchKeyBank(text, isNext)) return;
                         }
                         break;
-                    case Mode_Search.Key_Book_Mode:
+                    case ModeSearch.KEY_BOOK_MODE:
                         if (SearchKeyBank(text, isNext)) return;
                         if (SearchBook(text, isNext)) return;
                         break;
@@ -376,7 +338,7 @@ namespace Note_
                 {
                     index += text.Length / 2;
                     var str = index < 150 ? _data.Substring(0, 350) : _data.Substring(index - 150, 350);
-                    str = (RemoveRedundancy(str));
+                    str = (Utilities.RemoveRedundancy(str));
                     str = str.Replace(text, " █ " + text + " █ ");
                     ModifyTextComponent.SetText(this, lbQues, str);
                     lbQues.Size = new Size(638, 51);
@@ -419,42 +381,18 @@ namespace Note_
             return false;
         }
 
-        private static string RemoveRedundancy(string s)
-        {
-            s = s.Replace(Environment.NewLine, " ");
-            s = s.Replace("\t", " ");
-            s = s.Trim();
-            do
-            {
-                s = s.Replace("  ", " ");
-            }
-            while (s.Contains("  "));
-            do
-            {
-                s = s.Replace("..", ".");
-            }
-            while (s.Contains(".."));
-            var str = "!@#$%^&*()_+{}:\"<>?[]',./\\;-=";
-            foreach (var ch in str.ToCharArray())
-            {
-                s = s.Replace(ch + " ", ch.ToString());
-                s = s.Replace(" " + ch, ch.ToString());
-            }
-            return s;
-        }
-
         #endregion
 
         //========================================================================================
         #region MachineID, checkMachineID
-        private String getMachineID()
+        private String GetMachineId()
         {
             try
             {
-                var cpuID = cpuId();
-                var biosID = biosId();
-                var mainboardID = baseId();
-                return cpuID + biosID + mainboardID;
+                var cpuID = CpuId();
+                var biosID = BiosId();
+                var mainboardId = BaseId();
+                return cpuID + biosID + mainboardId;
             }
             catch (Exception)
             {
@@ -470,10 +408,10 @@ namespace Note_
             {
                 //var file = new StreamReader("lic.dll");
                 //var line = Decrypt(file.ReadLine());
-                var machineID = getMachineID();
+                var machineId = GetMachineId();
                 //file.Close();
-                if (!"BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000DELL   - 1072009Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineID)) return false;
-                setLocation();
+                if (!"BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000DELL   - 1072009Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineId)) return false;
+                SetLocation();
                 return true;
             }
             catch (Exception)
@@ -489,21 +427,21 @@ namespace Note_
         #region Form action
 
 
-        private void setLocation()
+        private void SetLocation()
         {
             var screen = Screen.PrimaryScreen;
             Location = new Point((screen.Bounds.Width - 638) / 2, screen.Bounds.Height - 49);
         }
 
 
-        static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
-        static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
-        static readonly IntPtr HWND_TOP = new IntPtr(0);
-        static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
+        static readonly IntPtr HwndTopmost = new IntPtr(-1);
+        static readonly IntPtr HwndNotopmost = new IntPtr(-2);
+        static readonly IntPtr HwndTop = new IntPtr(0);
+        static readonly IntPtr HwndBottom = new IntPtr(1);
 
-        const UInt32 SWP_NOSIZE = 0x0001;
-        const UInt32 SWP_NOMOVE = 0x0002;
-        const UInt32 TOPMOST_FLAGS = SWP_NOMOVE | SWP_NOSIZE;
+        const UInt32 SwpNosize = 0x0001;
+        const UInt32 SwpNomove = 0x0002;
+        const UInt32 TopmostFlags = SwpNomove | SwpNosize;
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -562,7 +500,7 @@ namespace Note_
             }
             return result;
         }
-        private static string cpuId()
+        private static string CpuId()
         {
             var retVal = identifier("Win32_Processor", "UniqueId");
             if (retVal == "")
@@ -580,7 +518,7 @@ namespace Note_
             }
             return retVal;
         }
-        private static string biosId()
+        private static string BiosId()
         {
             return identifier("Win32_BIOS", "Manufacturer")
             + identifier("Win32_BIOS", "SMBIOSBIOSVersion")
@@ -589,26 +527,26 @@ namespace Note_
             + identifier("Win32_BIOS", "ReleaseDate")
             + identifier("Win32_BIOS", "Version");
         }
-        private static string diskId()
+        private static string DiskId()
         {
             return identifier("Win32_DiskDrive", "Model")
             + identifier("Win32_DiskDrive", "Manufacturer")
             + identifier("Win32_DiskDrive", "Signature")
             + identifier("Win32_DiskDrive", "TotalHeads");
         }
-        private static string baseId()
+        private static string BaseId()
         {
             return identifier("Win32_BaseBoard", "Model")
             + identifier("Win32_BaseBoard", "Manufacturer")
             + identifier("Win32_BaseBoard", "Name")
             + identifier("Win32_BaseBoard", "SerialNumber");
         }
-        private static string videoId()
+        private static string VideoId()
         {
             return identifier("Win32_VideoController", "DriverVersion")
             + identifier("Win32_VideoController", "Name");
         }
-        private static string macId()
+        private static string MacId()
         {
             return identifier("Win32_NetworkAdapterConfiguration", "MACAddress", "IPEnabled");
         }

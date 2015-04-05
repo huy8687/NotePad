@@ -29,19 +29,15 @@ namespace Note_
             _listKey = new ArrayList();
         }
 
-        private string fname = "";
-        private System.Drawing.Printing.PrintDocument docToPrint = new System.Drawing.Printing.PrintDocument();
-        private ToolStripMenuItem wordWrapToolStripMenuItem;
-        
+        private string _fname = "";
+        private readonly System.Drawing.Printing.PrintDocument _docToPrint = new System.Drawing.Printing.PrintDocument();
 
-        public ToolStripMenuItem WordWrapToolStripMenuItem
-        {
-            get { return wordWrapToolStripMenuItem; }
-            set { wordWrapToolStripMenuItem = value; }
-        }
+
+        public ToolStripMenuItem WordWrapToolStripMenuItem { get; set; }
+
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (fname == "")
+            if (_fname == "")
             {
                 saveFileDialog1.Filter = "Text Files|*.txt";
                 var result = saveFileDialog1.ShowDialog();
@@ -49,36 +45,14 @@ namespace Note_
                 {
                     return;
                 }
-                fname = saveFileDialog1.FileName;
-                var s = new StreamWriter(fname);
+                _fname = saveFileDialog1.FileName;
+                var s = new StreamWriter(_fname);
                 s.WriteLine(richTextBox1.Text);
                 s.Flush();
                 s.Close();
             }
         }
-        private static string RemoveSpaces(string s)
-        {
-            s = s.Replace(Environment.NewLine, " ");
-            s = s.Replace("\t", " ");
-            s = s.Trim();
-            do
-            {
-                s = s.Replace("  ", " ");
-            }
-            while (s.Contains("  "));
-            do
-            {
-                s = s.Replace("..", ".");
-            }
-            while (s.Contains(".."));
-            var str = "!@#$%^&*()_+{}:\"<>?[]',./\\;-=";
-            foreach (var ch in str.ToCharArray())
-            {
-                s = s.Replace(ch + " ", ch.ToString());
-                s = s.Replace(" " + ch, ch.ToString());
-            }
-            return s;
-        }
+
         private void openCtrlOToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _listKey.Clear();
@@ -88,18 +62,18 @@ namespace Note_
                 var res = openFileDialog1.ShowDialog();
                 if (res == DialogResult.OK)
                 {
-                    var line = "";
+                    string line;
 
                     // Read the file and display it line by line.
                     var file =
-                        new System.IO.StreamReader(openFileDialog1.FileName, System.Text.Encoding.GetEncoding(1252));
+                        new StreamReader(openFileDialog1.FileName, System.Text.Encoding.GetEncoding(1252));
                     while ((line = file.ReadLine().ToLower()) != null)
                     {
                         
                         try
                         {
-                            var ques = RemoveSpaces(line.Substring(0, line.IndexOf("|")));
-                            var ans = RemoveSpaces(line.Substring(line.IndexOf("|") + 1));
+                            var ques = Utilities.RemoveRedundancy(line.Substring(0, line.IndexOf("|")));
+                            var ans = Utilities.RemoveRedundancy(line.Substring(line.IndexOf("|") + 1));
                             _listKey.Add(new Key(ques, ans));
                             richTextBox1.AppendText(line + "\n");
                         }
@@ -127,7 +101,7 @@ namespace Note_
                 var click = MessageBox.Show("The text in the Untitled has changed.\n\n Do you want to save the changes?", " My Notepad", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
                 if (click == DialogResult.Yes)
                 {
-                    if (fname == "")
+                    if (_fname == "")
                     {
                         saveFileDialog1.Filter = "Text Files|*.textBox1";
                         var result = saveFileDialog1.ShowDialog();
@@ -135,29 +109,29 @@ namespace Note_
                         {
                             return;
                         }
-                        fname = saveFileDialog1.FileName;
+                        _fname = saveFileDialog1.FileName;
                         // MessageBox.Show(fname);
                     }
-                    var write = new StreamWriter(fname);
+                    var write = new StreamWriter(_fname);
                     write.WriteLine(richTextBox1.Text);
                     write.Flush();
                     //  textBox1.Text = "";
                     write.Close();
 
                     richTextBox1.Text = "";
-                    fname = "";
+                    _fname = "";
                     // bool flag = false;
                 }
                 if (click == DialogResult.No)
                 {
                     richTextBox1.Text = "";
-                    fname = "";
+                    _fname = "";
                 }
             }
             else
             {
                 richTextBox1.Text = "";
-                fname = "";
+                _fname = "";
             }
         }
 
@@ -165,8 +139,8 @@ namespace Note_
         {
             saveFileDialog1.Filter = "Text Files|*.txt";
             saveFileDialog1.ShowDialog();
-            fname = saveFileDialog1.FileName;
-            if (fname == "")
+            _fname = saveFileDialog1.FileName;
+            if (_fname == "")
             {
                 saveFileDialog1.Filter = "Text Files|*.txt";
                 var result = saveFileDialog1.ShowDialog();
@@ -174,9 +148,9 @@ namespace Note_
                 {
                     return;
                 }
-                fname = saveFileDialog1.FileName;
+                _fname = saveFileDialog1.FileName;
             }
-            var s = new StreamWriter(fname);
+            var s = new StreamWriter(_fname);
             s.WriteLine(richTextBox1.Text);
             s.Flush();
             s.Close();
@@ -205,11 +179,11 @@ namespace Note_
 
             printDialog1.AllowSomePages = true;
             printDialog1.ShowHelp = true;
-            printDialog1.Document = docToPrint;
+            printDialog1.Document = _docToPrint;
             var result = printDialog1.ShowDialog();
             if (result == DialogResult.OK)
             {
-                docToPrint.Print();
+                _docToPrint.Print();
             }
 
         }
@@ -230,7 +204,7 @@ namespace Note_
             var click = MessageBox.Show("The text in the Untitled has changed.\n\n Do you want to save the changes?", " My Notepad", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation, MessageBoxDefaultButton.Button1);
             if (click == DialogResult.Yes)
             {
-                if (fname == "")
+                if (_fname == "")
                 {
                     saveFileDialog1.Filter = "Text Files|*.txt";
                     var result = saveFileDialog1.ShowDialog();
@@ -238,10 +212,10 @@ namespace Note_
                     {
                         return;
                     }
-                    fname = saveFileDialog1.FileName;
+                    _fname = saveFileDialog1.FileName;
                     // MessageBox.Show(fname);
                 }
-                var write = new StreamWriter(fname);
+                var write = new StreamWriter(_fname);
                 write.WriteLine(richTextBox1.Text);
                 write.Flush();
                 write.Close();
@@ -310,9 +284,8 @@ namespace Note_
 
         private void timeDateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string timeDate;
-            timeDate = DateTime.Now.ToShortTimeString() + " " +
-            DateTime.Now.ToShortDateString();
+            var timeDate = DateTime.Now.ToShortTimeString() + " " +
+                              DateTime.Now.ToShortDateString();
             var newSelectionStart = richTextBox1.SelectionStart + timeDate.Length;
             richTextBox1.Text = richTextBox1.Text.Insert(richTextBox1.SelectionStart, timeDate);
             richTextBox1.SelectionStart = newSelectionStart;
@@ -340,17 +313,17 @@ namespace Note_
                 new Form1(_listKey,_data).Show();
             }
         }
-        private ArrayList _listKey;
+        private readonly ArrayList _listKey;
         private string _data;
         #region MachineID, checkMachineID
-        private String getMachineID()
+        private String GetMachineId()
         {
             try
             {
-                var cpuID = cpuId();
-                var biosID = biosId();
-                var mainboardID = baseId();
-                return cpuID + biosID + mainboardID;
+                var cpuId = CpuId();
+                var biosId = BiosId();
+                var mainboardId = BaseId();
+                return cpuId + biosId + mainboardId;
             }
             catch (Exception)
             {
@@ -366,9 +339,9 @@ namespace Note_
             {
                 //var file = new StreamReader("lic.dll");
                 //var line = Decrypt(file.ReadLine());
-                var machineID = getMachineID();
+                var machineId = GetMachineId();
                 //file.Close();
-                return "BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000DELL   - 1072009Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineID);
+                return "BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000DELL   - 1072009Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineId);
             }
             catch (Exception)
             {
@@ -384,7 +357,7 @@ namespace Note_
             var result = "";
             var mc = new System.Management.ManagementClass(wmiClass);
             var moc = mc.GetInstances();
-            foreach (System.Management.ManagementObject mo in moc)
+            foreach (var mo in moc)
             {
                 if (mo[wmiMustBeTrue].ToString() == "True")
                 {
@@ -408,7 +381,7 @@ namespace Note_
             var result = "";
             var mc = new System.Management.ManagementClass(wmiClass);
             var moc = mc.GetInstances();
-            foreach (System.Management.ManagementObject mo in moc)
+            foreach (var mo in moc)
             {
                 if (result == "")
                 {
@@ -424,7 +397,7 @@ namespace Note_
             }
             return result;
         }
-        private static string cpuId()
+        private static string CpuId()
         {
             var retVal = identifier("Win32_Processor", "UniqueId");
             if (retVal == "")
@@ -442,7 +415,7 @@ namespace Note_
             }
             return retVal;
         }
-        private static string biosId()
+        private static string BiosId()
         {
             return identifier("Win32_BIOS", "Manufacturer")
             + identifier("Win32_BIOS", "SMBIOSBIOSVersion")
@@ -451,47 +424,47 @@ namespace Note_
             + identifier("Win32_BIOS", "ReleaseDate")
             + identifier("Win32_BIOS", "Version");
         }
-        private static string diskId()
+        private static string DiskId()
         {
             return identifier("Win32_DiskDrive", "Model")
             + identifier("Win32_DiskDrive", "Manufacturer")
             + identifier("Win32_DiskDrive", "Signature")
             + identifier("Win32_DiskDrive", "TotalHeads");
         }
-        private static string baseId()
+        private static string BaseId()
         {
             return identifier("Win32_BaseBoard", "Model")
             + identifier("Win32_BaseBoard", "Manufacturer")
             + identifier("Win32_BaseBoard", "Name")
             + identifier("Win32_BaseBoard", "SerialNumber");
         }
-        private static string videoId()
+        private static string VideoId()
         {
             return identifier("Win32_VideoController", "DriverVersion")
             + identifier("Win32_VideoController", "Name");
         }
-        private static string macId()
+        private static string MacId()
         {
             return identifier("Win32_NetworkAdapterConfiguration", "MACAddress", "IPEnabled");
         }
         #endregion
         #region Encrypt, decrypt data
 
-        private string p0 = "Q@LW2td1";
-        private string p1 = "P@@s9dhni2";
-        private string p2 = "S@LT&Ad2";
-        private string p3 = "C@@scw2ai2";
-        private string p4 = "A@@ad2djg5";
-        private string p5 = "@nk1j2b3k1jb23kb12";
-        private string p6 = "@n20dk2kjflep20fk3";
+        private string _p0 = "Q@LW2td1";
+        private string _p1 = "P@@s9dhni2";
+        private string _p2 = "S@LT&Ad2";
+        private string _p3 = "C@@scw2ai2";
+        private string _p4 = "A@@ad2djg5";
+        private string _p5 = "@nk1j2b3k1jb23kb12";
+        private string _p6 = "@n20dk2kjflep20fk3";
 
         private string Encrypt(string plainText)
         {
             var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 
-            var keyBytes = new Rfc2898DeriveBytes(p1 + "X", Encoding.ASCII.GetBytes(p2 + "X")).GetBytes(256 / 8);
+            var keyBytes = new Rfc2898DeriveBytes(_p1 + "X", Encoding.ASCII.GetBytes(_p2 + "X")).GetBytes(256 / 8);
             var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.Zeros };
-            var encryptor = symmetricKey.CreateEncryptor(keyBytes, Encoding.ASCII.GetBytes(p5 + "X"));
+            var encryptor = symmetricKey.CreateEncryptor(keyBytes, Encoding.ASCII.GetBytes(_p5 + "X"));
 
             byte[] cipherTextBytes;
 
@@ -511,10 +484,10 @@ namespace Note_
         private string Decrypt(string encryptedText)
         {
             var cipherTextBytes = Convert.FromBase64String(encryptedText);
-            var keyBytes = new Rfc2898DeriveBytes(p1, Encoding.ASCII.GetBytes(p2)).GetBytes(256 / 8);
+            var keyBytes = new Rfc2898DeriveBytes(_p1, Encoding.ASCII.GetBytes(_p2)).GetBytes(256 / 8);
             var symmetricKey = new RijndaelManaged() { Mode = CipherMode.CBC, Padding = PaddingMode.None };
 
-            var decryptor = symmetricKey.CreateDecryptor(keyBytes, Encoding.ASCII.GetBytes(p5));
+            var decryptor = symmetricKey.CreateDecryptor(keyBytes, Encoding.ASCII.GetBytes(_p5));
             var memoryStream = new MemoryStream(cipherTextBytes);
             var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
             var plainTextBytes = new byte[cipherTextBytes.Length];
@@ -529,13 +502,13 @@ namespace Note_
 
         private void miRegister_Click(object sender, EventArgs e)
         {
-            if (!check) return;
-            System.Windows.Forms.Clipboard.SetDataObject((Encrypt(getMachineID())));
-            check = false;
+            if (!_check) return;
+            System.Windows.Forms.Clipboard.SetDataObject((Encrypt(GetMachineId())));
+            _check = false;
             miRegister.Enabled = false;
         }
 
-        private bool check = true;
+        private bool _check = true;
 
         private void openBookToolStripMenuItem_Click(object sender, EventArgs e)
         {
