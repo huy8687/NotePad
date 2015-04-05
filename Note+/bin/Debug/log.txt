@@ -1,91 +1,85 @@
-DOWN
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
-DOWN
-UP
+﻿False
+False
+False
+False
+False
+False
+False
+False
+False
+True
+mode + 1 = Key_Book_Mode1
+False
+False
+False
+True
+mode + 1 = Key_Mode1
+False
+False
+False
+True
+mode + 1 = Book_Mode1
+False
+False
+False
+False
+False
+False
+False
+True
+mode + 1 = Key_Book_Mode1
+False
+False
+False
+False
+False
+False
+False
+False
+False
+False
+False
+True
+mode + 1 = Key_Mode1
+False
+True
+mode + 1 = Book_Mode1
+False
+True
+mode + 1 = Key_Book_Mode1
+False
+False
+True
+mode + 1 = Key_Mode1
+False
+True
+mode + 1 = Book_Mode1
+False
+True
+mode + 1 = Key_Book_Mode1
+False
+True
+mode + 1 = Key_Mode1
+False
+False
+False
+True
+mode + 1 = Book_Mode1
+False
+True
+mode + 1 = Key_Book_Mode1
+False
+True
+mode + 1 = Key_Mode1
+False
+True
+mode + 1 = Book_Mode1
+False
+True
+mode + 1 = Key_Book_Mode1
+False
+False
+False
+True
+mode + 1 = Key_Mode1
+False
