@@ -136,9 +136,17 @@ namespace Note_
         }
 
         private int _countExit = 0;
+        private DateTime _dtFirstClick;
+        private MouseEventArgs _firstClickEvent;
+        private bool _moveOne = false;
+
         void _mouseHook_MouseMove(object sender, MouseEventArgs e)
         {
-            
+            if (_isMouseDown && !_moveOne && e.X - _firstClickEvent.X > 200)
+            {
+                SearchData(pivotStr,true);
+                _moveOne = true;
+            }
         }
         private void keyboardHook_KeyDown(object sender, KeyEventArgs e)
         {
@@ -181,17 +189,16 @@ namespace Note_
         private void mouseHook_MouseUp(object sender, MouseEventArgs e)
         {
             _isMouseDown = false;
+            _moveOne = false;
             ExceptionCheck();
         }
-
-        private DateTime _dtFirstClick;
-        private MouseEventArgs _firstClickEvent;
-
+        
         private void mouseHook_MouseDown(object sender, MouseEventArgs e)
         {
             try
             {
                 _isMouseDown = true;
+                _moveOne = false;
                 if (DateTime.Now.Subtract(_dtFirstClick).TotalMilliseconds < 150 && _firstClickEvent != null && e.X == _firstClickEvent.X && e.Y == _firstClickEvent.Y)
                 {
                     _modeSearch = (Mode_Search)((int)(_modeSearch + 1) % 3);
@@ -200,7 +207,10 @@ namespace Note_
                 _firstClickEvent = e;
                 _dtFirstClick = DateTime.Now;
             }
-            catch{}
+            catch
+            {
+                // ignored
+            }
         }
 
         private void thread_MouseListen()
@@ -315,22 +325,22 @@ namespace Note_
                 switch (_modeSearch)
                 {
                     case Mode_Search.Key_Mode:
-                        if (SearchKeyBank(text,false)) return;
+                        if (SearchKeyBank(text, isNext)) return;
                         if (_listKey.Count < 2)
                         {
-                            if (SearchBook(text,false)) return;
+                            if (SearchBook(text, isNext)) return;
                         }
                         break;
                     case Mode_Search.Book_Mode:
-                        if (SearchBook(text,false)) return;
+                        if (SearchBook(text, isNext)) return;
                         if (_data.Length < 5)
                         {
-                            if (SearchKeyBank(text,false)) return;
+                            if (SearchKeyBank(text, isNext)) return;
                         }
                         break;
                     case Mode_Search.Key_Book_Mode:
-                        if (SearchKeyBank(text,false)) return;
-                        if (SearchBook(text,false)) return;
+                        if (SearchKeyBank(text, isNext)) return;
+                        if (SearchBook(text, isNext)) return;
                         break;
                 }
 
@@ -352,6 +362,16 @@ namespace Note_
             if (!string.IsNullOrEmpty(_data))
             {
                 var index = _data.IndexOf(text);
+
+                if (isNext && _indexBook!=-1)
+                {
+                    index = _data.IndexOf(text,_indexBook);
+                    
+                } else if (!isNext)
+                {
+                    _indexBook = -1;
+                }
+
                 if (index >= 0)
                 {
                     index += text.Length / 2;
@@ -371,7 +391,18 @@ namespace Note_
 
         private bool SearchKeyBank(String text, bool isNext)
         {
-            for (var index = 0; index < _listKey.Count; index++)
+            var indexStart = 0;
+
+            if (isNext && _indexKey != -1 && _indexKey != _listKey.Count)
+            {
+                indexStart = _indexKey + 1;
+            }
+            else if (!isNext)
+            {
+                _indexKey = -1;
+            }
+
+            for (var index = indexStart; index < _listKey.Count; index++)
             {
                 var key = (Key) _listKey[index];
                 if (key.Ans.Contains(text) || key.Ques.Contains(text))
@@ -477,27 +508,6 @@ namespace Note_
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-        private void btStart_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                lbAns.Text = "";
-                lbQues.Text = "";
-                _mouseListen.Start();
-                _mouseHook.Start();
-                _keyboardHook.Start();
-            }
-            catch (Exception)
-            {
-                ExceptionCheck();
-            }
-
-        }
-
-        private void btExit_Click(object sender, EventArgs e)
-        {
-            Environment.Exit(0);
-        }
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -603,9 +613,5 @@ namespace Note_
             return identifier("Win32_NetworkAdapterConfiguration", "MACAddress", "IPEnabled");
         }
         #endregion
-
-        private void btSelect_Click(object sender, EventArgs e)
-        {
-        }
     }
 }
