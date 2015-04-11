@@ -106,7 +106,7 @@ namespace Note_
         {
             if (_isMouseDown && !_moveOne && e.X - _firstClickEvent.X > 200)
             {
-                SearchData(_pivotStr,true);
+                SearchData(_pivotStr, true);
                 _moveOne = true;
             }
         }
@@ -154,7 +154,7 @@ namespace Note_
             _moveOne = false;
             ExceptionCheck();
         }
-        
+
         private void mouseHook_MouseDown(object sender, MouseEventArgs e)
         {
             try
@@ -198,7 +198,7 @@ namespace Note_
                                 if (_isMouseDown && text != "" && text.Length < 777 && !text.Equals(_pivotStr))
                                 {
                                     _pivotStr = text;
-                                    SearchData(text,false);
+                                    SearchData(text, false);
                                 }
 
                             }
@@ -316,8 +316,8 @@ namespace Note_
             }
         }
 
-        private int _indexKey=-1;
-        private int _indexBook=-1;
+        private int _indexKey = -1;
+        private int _indexBook = -1;
 
         private bool SearchBook(String text, bool isNext)
         {
@@ -325,11 +325,12 @@ namespace Note_
             {
                 var index = _data.IndexOf(text);
 
-                if (isNext && _indexBook!=-1)
+                if (isNext && _indexBook != -1)
                 {
-                    index = _data.IndexOf(text,_indexBook);
-                    
-                } else if (!isNext)
+                    index = _data.IndexOf(text, _indexBook);
+
+                }
+                else if (!isNext)
                 {
                     _indexBook = -1;
                 }
@@ -339,7 +340,7 @@ namespace Note_
                     index += text.Length / 2;
                     var str = index < 150 ? _data.Substring(0, 350) : _data.Substring(index - 150, 350);
                     str = (Utilities.RemoveRedundancy(str));
-                    str = str.Replace(text, " █ " + text + " █ ");
+                    str = index.ToString() + ">" + str.Replace(text, " █ " + text + " █ ");
                     ModifyTextComponent.SetText(this, lbQues, str);
                     lbQues.Size = new Size(638, 51);
                     lbAns.Size = new Size(1, 1);
@@ -366,7 +367,7 @@ namespace Note_
 
             for (var index = indexStart; index < _listKey.Count; index++)
             {
-                var key = (Key) _listKey[index];
+                var key = (Key)_listKey[index];
                 if (key.Ans.Contains(text) || key.Ques.Contains(text))
                 {
                     ModifyTextComponent.SetText(this, lbAns, key.Ans);
@@ -410,7 +411,9 @@ namespace Note_
                 //var line = Decrypt(file.ReadLine());
                 var machineId = GetMachineId();
                 //file.Close();
-                if (!"BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000DELL   - 1072009Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineId)) return false;
+                if ((!"BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000DELL   - 1072009Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineId))
+                 && (!"BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000DELL   - 1072009Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineId)))
+                    return false;
                 SetLocation();
                 return true;
             }

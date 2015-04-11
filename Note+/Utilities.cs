@@ -22,9 +22,9 @@ namespace Note_
             while (s.Contains("  "));
             do
             {
-                s = s.Replace("..", ".");
+                s = s.Replace("..", ".").Replace("__", "_");
             }
-            while (s.Contains(".."));
+            while (s.Contains("..") || s.Contains("__"));
             const string str = "!@#$%^&*()_+{}:\"<>?[]',./\\;-=";
             foreach (var ch in str.ToCharArray())
             {

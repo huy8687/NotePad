@@ -31,7 +31,7 @@ namespace Note_
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            var resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.lbQues = new System.Windows.Forms.Label();
             this.lbAns = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -39,8 +39,8 @@ namespace Note_
             // 
             // lbQues
             // 
-            this.lbQues.Font = new System.Drawing.Font("Corbel", 10F);
-            this.lbQues.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.lbQues.Font = new System.Drawing.Font("Tahoma", 9.7F);
+            this.lbQues.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(146)))), ((int)(((byte)(146)))), ((int)(((byte)(146)))));
             this.lbQues.Location = new System.Drawing.Point(3, 0);
             this.lbQues.Name = "lbQues";
             this.lbQues.Size = new System.Drawing.Size(635, 34);
@@ -49,7 +49,7 @@ namespace Note_
             // 
             // lbAns
             // 
-            this.lbAns.Font = new System.Drawing.Font("Corbel", 10F);
+            this.lbAns.Font = new System.Drawing.Font("Tahoma", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lbAns.ForeColor = System.Drawing.SystemColors.ButtonShadow;
             this.lbAns.Location = new System.Drawing.Point(0, 33);
             this.lbAns.Name = "lbAns";

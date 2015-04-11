@@ -12,7 +12,7 @@
             <Debugging />
         </Options>
         <ApplicationName />
-        <Destination DestinationFileName=".\Note+\bin\Debug\Notepad_kid.exe" />
+        <Destination DestinationFileName=".\Note+\bin\Debug\Notepad_luan.exe" />
         <Assemblies>
             <Assembly AssemblyName="Notepad, Culture=neutral, PublicKeyToken=null">
                 <Merging>
