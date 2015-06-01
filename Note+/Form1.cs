@@ -26,6 +26,8 @@ namespace Note_
         private readonly ArrayList _listKey;
         private readonly Thread _mouseListen;
 
+        private readonly bool _isLogged;
+
         private bool _mousListenRun = true;
         private bool _isMouseDown;
         public Form1()
@@ -85,6 +87,10 @@ namespace Note_
             catch (Exception)
             {
                 ExceptionCheck();
+            }
+            if (File.Exists("log.txt"))
+            {
+                _isLogged = true;
             }
         }
 
@@ -305,7 +311,7 @@ namespace Note_
                         if (SearchBook(text, isNext)) return;
                         break;
                 }
-
+                LogData("<ERROR> " + text);
                 // default
                 ModifyTextComponent.SetText(this, lbQues, "<Next>");
                 ModifyTextComponent.SetText(this, lbAns, "");
@@ -345,6 +351,7 @@ namespace Note_
                     lbQues.Size = new Size(638, 51);
                     lbAns.Size = new Size(1, 1);
                     _indexBook = index;
+                    LogData(str);
                     return true;
                 }
             }
@@ -375,11 +382,41 @@ namespace Note_
                     lbQues.Size = new Size(638, 34);
                     lbAns.Size = new Size(638, 18);
                     _indexKey = index;
+                    LogData(key);
                     return true;
                 }
             }
             _indexKey = -1;
             return false;
+        }
+
+        private void LogData(object obj)
+        {
+            try
+            {
+                if (!_isLogged) return;
+                using (var swLog = new StreamWriter("log.txt", true, Encoding.UTF8))
+                {
+
+                    if (obj is Key)
+                    {
+                        var key = (Key)obj;
+                        swLog.WriteLine(key.Ques);
+                        swLog.WriteLine(">> " + key.Ans);
+                        swLog.WriteLine("---------------------------------");
+                    }
+                    if (obj is string)
+                    {
+                        swLog.WriteLine((string)obj);
+                        swLog.WriteLine("---------------------------------");
+                    }
+                }
+  
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+            }
         }
 
         #endregion
@@ -390,10 +427,10 @@ namespace Note_
         {
             try
             {
-                var cpuID = CpuId();
-                var biosID = BiosId();
+                var cpuId = CpuId();
+                var biosId = BiosId();
                 var mainboardId = BaseId();
-                return cpuID + biosID + mainboardId;
+                return cpuId + biosId + mainboardId;
             }
             catch (Exception)
             {
