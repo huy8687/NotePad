@@ -62,25 +62,27 @@ namespace Note_
                 var res = openFileDialog1.ShowDialog();
                 if (res == DialogResult.OK)
                 {
-                    string line;
-
+                    string line = "";
+                    string strDisplay = "";
+                    string strError = "ERRROR=========================ERRROOR\r\n";
                     // Read the file and display it line by line.
-                    var file =
-                        new StreamReader(openFileDialog1.FileName, System.Text.Encoding.GetEncoding(1252));
-                    while ((line = file.ReadLine().ToLower()) != null)
+                    System.IO.StreamReader file =
+                        new System.IO.StreamReader(openFileDialog1.FileName, System.Text.Encoding.GetEncoding(1252));
+                    while ((line = file.ReadLine()) != null)
                     {
-                        
+                        line = line.ToLower();
                         try
                         {
-                            var ques = Utilities.RemoveRedundancy(line.Substring(0, line.IndexOf("|")));
-                            var ans = Utilities.RemoveRedundancy(line.Substring(line.IndexOf("|") + 1));
+                            String ques = Utilities.RemoveRedundancy(line.Substring(0, line.IndexOf("|")));
+                            String ans = Utilities.RemoveRedundancy(line.Substring(line.IndexOf("|") + 1));
                             _listKey.Add(new Key(ques, ans));
-                            richTextBox1.AppendText(line + "\n");
+                            strDisplay = strDisplay + (line + "\r\n");
                         }
-                        catch (Exception) { richTextBox1.AppendText("===========ERROOR=="+line + "\n"); }
+                        catch (Exception) { strError = strError + ("**" + line + "\r\n"); }
                     }
+                    if (strError.Equals("ERRROR=========================ERRROOR\r\n")) strError = "";
+                    richTextBox1.AppendText(strDisplay + strError);
                     file.Close();
-                    
                 }
                 else
                 {

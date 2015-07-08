@@ -30,6 +30,9 @@ namespace Note_
 
         private bool _mousListenRun = true;
         private bool _isMouseDown;
+
+        private bool _isAllow = true;
+
         public Form1()
         {
             if (!CheckLic())
@@ -110,7 +113,7 @@ namespace Note_
 
         void _mouseHook_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isMouseDown && !_moveOne && e.X - _firstClickEvent.X > 200)
+            if (_isAllow && _isMouseDown && !_moveOne && e.X - _firstClickEvent.X > 200)
             {
                 SearchData(_pivotStr, true);
                 _moveOne = true;
@@ -125,7 +128,7 @@ namespace Note_
                     _mouseHook.Stop();
                     _keyboardHook.Stop();
                     _mousListenRun = false;
-                    _mouseListen.Join();
+                    _mouseListen.Join(1000);
                 }
                 catch (Exception)
                 {
@@ -167,16 +170,30 @@ namespace Note_
             {
                 _isMouseDown = true;
                 _moveOne = false;
-                if (DateTime.Now.Subtract(_dtFirstClick).TotalMilliseconds < 150 && _firstClickEvent != null && e.X == _firstClickEvent.X && e.Y == _firstClickEvent.Y)
+                if (DateTime.Now.Subtract(_dtFirstClick).TotalMilliseconds < 500 && _firstClickEvent != null &&
+                    e.X == _firstClickEvent.X && e.Y == _firstClickEvent.Y)
                 {
-                    _modeSearch = (ModeSearch)((int)(_modeSearch + 1) % 3);
-                    ModifyTextComponent.SetText(this, lbQues, _modeSearch.ToString());
+                    if (e.X < 10 && e.Y < 10)
+                    {
+                        _isAllow = !_isAllow;
+                        //MessageBox.Show(_isAllow.ToString());
+                    }
+                    if (e.X > _screen.Bounds.Width - 10 && e.Y < 10)
+                    {
+                        _modeSearch = (ModeSearch) ((int) (_modeSearch + 1)%3);
+                        ModifyTextComponent.SetText(this, lbQues, _modeSearch.ToString());
+                    }
+                    _firstClickEvent = null;
                 }
-                _firstClickEvent = e;
-                _dtFirstClick = DateTime.Now;
+                else
+                {
+                    _firstClickEvent = e;
+                    _dtFirstClick = DateTime.Now;
+                }
             }
-            catch
+            catch (Exception ex)
             {
+                MessageBox.Show(ex.ToString());
                 // ignored
             }
         }
@@ -190,7 +207,7 @@ namespace Note_
                     var mouse = Cursor.Position; // use Windows forms mouse code instead of WPF
                     var element = AutomationElement.FromPoint(new System.Windows.Point(mouse.X, mouse.Y));
 
-                    if (element != null)
+                    if (element != null && _isAllow)
                     {
                         object pattern;
 
@@ -469,8 +486,7 @@ namespace Note_
 
         private void SetLocation()
         {
-            var screen = Screen.PrimaryScreen;
-            Location = new Point((screen.Bounds.Width - 638) / 2, screen.Bounds.Height - 49);
+            Location = new Point((_screen.Bounds.Width - 638) / 2, _screen.Bounds.Height - 49);
         }
 
 
@@ -478,6 +494,7 @@ namespace Note_
         static readonly IntPtr HwndNotopmost = new IntPtr(-2);
         static readonly IntPtr HwndTop = new IntPtr(0);
         static readonly IntPtr HwndBottom = new IntPtr(1);
+        private Screen _screen = Screen.PrimaryScreen;
 
         const UInt32 SwpNosize = 0x0001;
         const UInt32 SwpNomove = 0x0002;
