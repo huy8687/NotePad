@@ -344,7 +344,8 @@ namespace Note_
                 var machineId = GetMachineId();
                 //file.Close();
                 return "BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000DELL   - 1072009Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineId)
-                    || "BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000DELL   - 1072009Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineId);
+                    || "BFEBFBFF000306A9Insyde Corp.R0140D427546999-300276020120823000000.000000+000Sony - 20120823Sony CorporationBase BoardN/A".Equals(machineId)
+                    || "BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000BIOS Date: 08/03/12 10:13:55 Ver: 04.06.04Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineId);
             }
             catch (Exception)
             {

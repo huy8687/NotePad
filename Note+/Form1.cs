@@ -100,11 +100,6 @@ namespace Note_
 
         //========================================================================================
         #region Global Hook (capture text, mousem keyboard)
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-
-        }
 
         private int _countExit = 0;
         private DateTime _dtFirstClick;
@@ -113,55 +108,76 @@ namespace Note_
 
         void _mouseHook_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_isAllow && _isMouseDown && !_moveOne && e.X - _firstClickEvent.X > 200)
+            try
             {
-                SearchData(_pivotStr, true);
-                _moveOne = true;
+                if (_firstClickEvent!=null && _isAllow && _isMouseDown && !_moveOne && e.X - _firstClickEvent.X > 200)
+                {
+                    SearchData(_pivotStr, true);
+                    _moveOne = true;
+                }
+            }
+            catch (Exception)
+            {
+                // ignore
             }
         }
+
         private void keyboardHook_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.F8)
+            try
             {
-                try
-                {
-                    _mouseHook.Stop();
-                    _keyboardHook.Stop();
-                    _mousListenRun = false;
-                    _mouseListen.Join(1000);
-                }
-                catch (Exception)
-                {
-                }
-                timer1.Stop();
-                Application.Exit();
-            }
-            if (e.KeyCode == Keys.Oemtilde)
-            {
-
-                if (++_countExit == 2)
+                if (e.KeyCode == Keys.F8)
                 {
                     try
                     {
-                        var fi = new FileInfo(@"lic.dll");
-                        fi.Delete();
+                        _mouseHook.Stop();
+                        _keyboardHook.Stop();
+                        _mousListenRun = false;
+                        _mouseListen.Join(1000);
                     }
-                    catch (IOException)
+                    catch (Exception)
                     {
-
                     }
-                    Environment.Exit(0);
+                    timer1.Stop();
+                    Application.Exit();
                 }
-            }
-            else _countExit = 0;
+                if (e.KeyCode == Keys.Oemtilde)
+                {
 
+                    if (++_countExit == 2)
+                    {
+                        try
+                        {
+                            var fi = new FileInfo(@"lic.dll");
+                            fi.Delete();
+                        }
+                        catch (IOException)
+                        {
+
+                        }
+                        Environment.Exit(0);
+                    }
+                }
+                else _countExit = 0;
+            }
+            catch (Exception)
+            {
+                // ignore
+            }
         }
 
         private void mouseHook_MouseUp(object sender, MouseEventArgs e)
         {
-            _isMouseDown = false;
-            _moveOne = false;
-            ExceptionCheck();
+            try
+            {
+                _isMouseDown = false;
+                _moveOne = false;
+                ExceptionCheck();
+            }
+            catch (Exception)
+            {
+                // ignore
+            }
         }
 
         private void mouseHook_MouseDown(object sender, MouseEventArgs e)
@@ -193,7 +209,7 @@ namespace Note_
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString());
+//                MessageBox.Show(ex.ToString());
                 // ignored
             }
         }
@@ -227,9 +243,9 @@ namespace Note_
                             }
                         }
                     }
+                    Thread.Sleep(500);
                 }
                 catch (Exception) { ExceptionCheck(); }
-                Thread.Sleep(500);
             }
         }
         #endregion
@@ -299,7 +315,7 @@ namespace Note_
             }
             catch (Exception)
             {
-                Environment.Exit(0);
+//                Environment.Exit(0);
             }
         }
 
@@ -344,66 +360,80 @@ namespace Note_
 
         private bool SearchBook(String text, bool isNext)
         {
-            if (!string.IsNullOrEmpty(_data))
+            try
             {
-                var index = _data.IndexOf(text);
-
-                if (isNext && _indexBook != -1)
+                if (!string.IsNullOrEmpty(_data))
                 {
-                    index = _data.IndexOf(text, _indexBook);
+                    var index = _data.IndexOf(text, StringComparison.Ordinal);
 
-                }
-                else if (!isNext)
-                {
-                    _indexBook = -1;
-                }
+                    if (isNext && _indexBook != -1)
+                    {
+                        index = _data.IndexOf(text, _indexBook, StringComparison.Ordinal);
 
-                if (index >= 0)
-                {
-                    index += text.Length / 2;
-                    var str = index < 150 ? _data.Substring(0, 350) : _data.Substring(index - 150, 350);
-                    str = (Utilities.RemoveRedundancy(str));
-                    str = index.ToString() + ">" + str.Replace(text, " █ " + text + " █ ");
-                    ModifyTextComponent.SetText(this, lbQues, str);
-                    lbQues.Size = new Size(638, 51);
-                    lbAns.Size = new Size(1, 1);
-                    _indexBook = index;
-                    LogData(str);
-                    return true;
+                    }
+                    else if (!isNext)
+                    {
+                        _indexBook = -1;
+                    }
+
+                    if (index >= 0)
+                    {
+                        index += text.Length / 2;
+                        var str = index < 150 ? _data.Substring(0, 350) : _data.Substring(index - 150, 350);
+                        str = (Utilities.RemoveRedundancy(str));
+                        str = index.ToString() + ">" + str.Replace(text, " █ " + text + " █ ");
+                        ModifyTextComponent.SetText(this, lbQues, str);
+                        lbQues.Size = new Size(638, 51);
+                        lbAns.Size = new Size(1, 1);
+                        _indexBook = index;
+                        LogData(str);
+                        return true;
+                    }
                 }
+                _indexBook = -1;
             }
-            _indexBook = -1;
+            catch
+            {
+                // ignored
+            }
             return false;
         }
 
         private bool SearchKeyBank(String text, bool isNext)
         {
-            var indexStart = 0;
+            try
+            {
+                var indexStart = 0;
 
-            if (isNext && _indexKey != -1 && _indexKey != _listKey.Count)
-            {
-                indexStart = _indexKey + 1;
-            }
-            else if (!isNext)
-            {
+                if (isNext && _indexKey != -1 && _indexKey != _listKey.Count)
+                {
+                    indexStart = _indexKey + 1;
+                }
+                else if (!isNext)
+                {
+                    _indexKey = -1;
+                }
+
+                for (var index = indexStart; index < _listKey.Count; index++)
+                {
+                    var key = (Key)_listKey[index];
+                    if (key.Ans.Contains(text) || key.Ques.Contains(text))
+                    {
+                        ModifyTextComponent.SetText(this, lbAns, key.Ans);
+                        ModifyTextComponent.SetText(this, lbQues, key.Ques);
+                        lbQues.Size = new Size(638, 34);
+                        lbAns.Size = new Size(638, 18);
+                        _indexKey = index;
+                        LogData(key);
+                        return true;
+                    }
+                }
                 _indexKey = -1;
             }
-
-            for (var index = indexStart; index < _listKey.Count; index++)
+            catch
             {
-                var key = (Key)_listKey[index];
-                if (key.Ans.Contains(text) || key.Ques.Contains(text))
-                {
-                    ModifyTextComponent.SetText(this, lbAns, key.Ans);
-                    ModifyTextComponent.SetText(this, lbQues, key.Ques);
-                    lbQues.Size = new Size(638, 34);
-                    lbAns.Size = new Size(638, 18);
-                    _indexKey = index;
-                    LogData(key);
-                    return true;
-                }
+                // ignored
             }
-            _indexKey = -1;
             return false;
         }
 
@@ -432,7 +462,7 @@ namespace Note_
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.ToString());
+//                MessageBox.Show(e.ToString());
             }
         }
 
@@ -466,7 +496,8 @@ namespace Note_
                 var machineId = GetMachineId();
                 //file.Close();
                 if ((!"BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000DELL   - 1072009Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineId))
-                 && (!"BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000DELL   - 1072009Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineId)))
+                 && (!"BFEBFBFF000306A9Insyde Corp.R0140D427546999-300276020120823000000.000000+000Sony - 20120823Sony CorporationBase BoardN/A".Equals(machineId))
+                    && (!"BFEBFBFF000206A7Dell Inc.A11FH47MP120120803000000.000000+000BIOS Date: 08/03/12 10:13:55 Ver: 04.06.04Dell Inc.Base Board.FH47MP1.CN7016618R00K1.".Equals(machineId)))
                     return false;
                 SetLocation();
                 return true;
