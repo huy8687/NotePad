@@ -48,3 +48,13 @@ E:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Note_.Properties.
 E:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Notepad.csproj.GenerateResource.Cache
 E:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Notepad.exe
 E:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Notepad.pdb
+D:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\bin\Debug\Notepad.exe.config
+D:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Notepad.exe
+D:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Notepad.pdb
+D:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\bin\Debug\Notepad.exe
+D:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\bin\Debug\Notepad.pdb
+D:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Note_.Form1.resources
+D:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Note_.NotePad.resources
+D:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Note_.Properties.Resources.resources
+D:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Notepad.csproj.GenerateResource.Cache
+D:\Learning\Working\Notepppp\Note_Book\NotePad\Note+\obj\Debug\Notepad.csprojResolveAssemblyReference.cache
